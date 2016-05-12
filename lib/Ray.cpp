@@ -1,12 +1,12 @@
 #include "Ray.h"
 
-Ray::Ray(const glm::vec3 &orig, const glm::vec3 &dir)
+Ray::Ray(const glm::dvec3 &orig, const glm::dvec3 &dir)
 	: origin(orig), direction(dir) {
 }
 
 Ray Ray::Reflect(const Ray &normalRay) const {
 	// Normalize normalRay and call ReflectNormalized.
-	glm::vec3 normalizedNormalDirection = glm::normalize(normalRay.direction);
+	glm::dvec3 normalizedNormalDirection = glm::normalize(normalRay.direction);
 	return ReflectNormalized(Ray(normalRay.origin, normalizedNormalDirection));
 }
 
@@ -20,8 +20,8 @@ Ray Ray::ReflectNormalized(const Ray &normalRay) const {
 				 "Direction of ray must be normalized!");
 	assert(glm::dot(normalRay.direction, direction) < 0 &&
 				 "Wrong normal direction for reflection!");
-	glm::vec3 normalizedNormalDirection = glm::normalize(normalRay.direction);
+	glm::dvec3 normalizedNormalDirection = glm::normalize(normalRay.direction);
 	auto IDotN = glm::dot(direction, normalRay.direction);
-	glm::vec3 resDirection = direction - 2 * IDotN * normalRay.direction;
+	glm::dvec3 resDirection = direction - 2 * IDotN * normalRay.direction;
 	return Ray(normalRay.origin, resDirection);
 }

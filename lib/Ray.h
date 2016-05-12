@@ -6,7 +6,7 @@
 
 struct Ray {
 public:
-	Ray(const glm::vec3 &orig, const glm::vec3 &dir);
+	Ray(const glm::dvec3 &orig, const glm::dvec3 &dir);
 
 	// Cast a reflection ray using origin and direction of \p normalRay.
 	// Normalize direction of \p normalRay and call ReflectNormalized.
@@ -23,6 +23,6 @@ public:
 	//   2. Direction of resulting ray is normalized.
 	Ray ReflectNormalized(const Ray &normalRay) const;
 
-	glm::vec3 origin;
-	glm::vec3 direction;
+	glm::dvec3 origin;
+	glm::dvec3 direction;
 };

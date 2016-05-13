@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Ray.h"
+#include "Mesh.h"
 
 #define ASSERT_VEC_NEAR(vec1, vec2, epsilon) \
 	ASSERT_NEAR(glm::length(vec1 - vec2), 0.0, epsilon)
@@ -92,6 +93,39 @@ TEST(RayTests, ReflectionTest) {
 	Ray reflected2 = ray1.ReflectNormalized(normRay2);
 	ASSERT_VEC_NEAR(reflected2.origin, normRay2.origin, EPS_STRONG);
 	ASSERT_VEC_NEAR(reflected2.direction, -1.0 * ray1.direction, EPS_STRONG);
+}
+
+// === Mesh tests ===
+TEST(MeshTests, FaceSquaresTest) {
+	Mesh mesh(true);
+
+	// Cube.
+	// Front plane.
+	auto v0 = mesh.addVertex(glm::dvec3(0.0, 0.0, 0.0));
+	auto v1 = mesh.addVertex(glm::dvec3(5.0, 0.0, 0.0));
+	auto v2 = mesh.addVertex(glm::dvec3(5.0, 5.0, 0.0));
+	auto v3 = mesh.addVertex(glm::dvec3(0.0, 5.0, 0.0));
+	// Back plane.
+	auto v4 = mesh.addVertex(glm::dvec3(0.0, 0.0, 5.0));
+	auto v5 = mesh.addVertex(glm::dvec3(5.0, 0.0, 5.0));
+	auto v6 = mesh.addVertex(glm::dvec3(5.0, 5.0, 5.0));
+	auto v7 = mesh.addVertex(glm::dvec3(0.0, 5.0, 5.0));
+	// Faces (ccw).
+	auto f0 = mesh.addQuadFace(v0, v1, v2, v3);
+	auto f1 = mesh.addQuadFace(v1, v5, v6, v2);
+	auto f2 = mesh.addQuadFace(v3, v2, v6, v7);
+	auto f3 = mesh.addQuadFace(v4, v0, v3, v7);
+	auto f4 = mesh.addQuadFace(v5, v4, v7, v6);
+	auto f5 = mesh.addQuadFace(v4, v5, v1, v0);
+
+	mesh.CalculateNormals();
+
+	// Test squares
+	ASSERT_EQ(mesh.getNumVertexes(), 8);
+	ASSERT_EQ(mesh.getNumFaces(), 12);
+	for (const auto &face : mesh.getFaces()) {
+		ASSERT_DOUBLE_EQ(face.getSquare(), 12.5);
+	}
 }
 
 int main(int argc, char **argv) {

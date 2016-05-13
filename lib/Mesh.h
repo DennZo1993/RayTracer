@@ -19,8 +19,14 @@ typedef unsigned int MeshObjectIndexType;
 //
 // Normally in a mesh each vertex has at least 1 adjacent face.
 struct MeshVertex {
-	MeshVertex();
-	MeshVertex(const glm::dvec3 &p, const glm::dvec3 &n);
+	MeshVertex(Mesh &parent);
+	MeshVertex(const glm::dvec3 &p, Mesh &parent);
+	MeshVertex(const glm::dvec3 &p, const glm::dvec3 &n, Mesh &parent);
+
+	// Calculate normal vector from adjacent faces.
+	// For each adjacent face use its flat normal (cross product),
+	// resulting normal vector is normalized weighted sum of faces' normals.
+	void CalculateNormal();
 
 	// 3D coordinates of the vertex.
 	glm::dvec3 point;
@@ -28,6 +34,9 @@ struct MeshVertex {
 	glm::dvec3 normal;
 	// Vector of indexes of adjacent faces.
 	std::set<MeshObjectIndexType> faceIndexes;
+
+	// Reference to a Mesh this face belongs to. Used to access faces.
+	Mesh &parentMesh;
 };
 
 
@@ -75,6 +84,11 @@ struct MeshFace {
 	// its barycentric coordinates (returned by hasIntersection method).
 	// Normals form a smooth vector field.
 	glm::dvec3 getNormalVector(double u, double v) const;
+	glm::dvec3 getNormalVectorInterpolated(double u, double v) const;
+	glm::dvec3 getNormalVectorCross() const;
+
+	// Get square of the triangle.
+	double getSquare() const;
 
 	// Get one of 3 vertexes that form this face.
 	// Index \p idx must be in range of [0..2].
@@ -96,13 +110,36 @@ struct MeshFace {
 // Class representing an arbitrary mesh.
 class Mesh {
 public:
-	Mesh() {}
+	Mesh(bool interpolate) : interpolateNormals(interpolate) {}
 
+	bool getInterpolateNormals() const { return interpolateNormals; }
 	const std::vector<MeshVertex>& getVertexes() const {
 		return vertexes;
 	}
 	const std::vector<MeshFace>& getFaces() const { return faces; }
+
+	std::size_t getNumVertexes() const { return vertexes.size(); }
+	std::size_t getNumFaces() const { return faces.size(); }
+
+	MeshObjectIndexType addVertex(const glm::dvec3 &p,
+																const glm::dvec3 &n = glm::dvec3(0.0, 0.0, 0.0));
+
+	MeshObjectIndexType addFace(MeshObjectIndexType idx1,
+															MeshObjectIndexType idx2,
+															MeshObjectIndexType idx3);
+
+	// Add quad face (ccw).
+	// Adds two triangle faces (ccw) and returns their indexes.
+	std::pair<MeshObjectIndexType, MeshObjectIndexType>
+	addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
+							MeshObjectIndexType idx3, MeshObjectIndexType idx4);
+
+	// Calculate normals for each vertex.
+	void CalculateNormals();
 private:
+	// Flag indicating whether normal vectors are interpolated or not.
+	bool interpolateNormals;
+
 	std::vector<MeshVertex> vertexes;
 	std::vector<MeshFace> faces;
 };

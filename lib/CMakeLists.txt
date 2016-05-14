@@ -1,6 +1,6 @@
 set (Camera_SRCS Camera.h Camera.cpp)
 set (Ray_SRCS Ray.h Ray.cpp)
-set (Mesh_SRCS IntersectionResult.h Object3d.h Mesh.h Mesh.cpp)
+set (Mesh_SRCS IntersectionResult.h Object3d.h Sphere.h Mesh.h Mesh.cpp)
 
 add_library(libRayTracer STATIC ${Camera_SRCS} ${Ray_SRCS} ${Mesh_SRCS})
 

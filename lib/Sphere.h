@@ -8,8 +8,12 @@ public:
     center(c), radius(r) {}
 
   IntersectionResult intersect(const Ray &ray) const {
-    auto M = ray.origin - center;
-    double b = glm::dot(M, ray.direction);
+    #ifndef NDEBUG
+    ray.AssertNormalized();
+    #endif // !NDEBUG
+
+    auto M = ray.getOrigin() - center;
+    double b = glm::dot(M, ray.getDirection());
     double c = glm::dot(M, M) - radius * radius;
 
     // Ray’s origin is outside (c > 0) and ray is pointing away (b > 0).
@@ -31,7 +35,7 @@ public:
     }
 
     // Point of intersection.
-    glm::dvec3 intersectionPoint = ray.origin + dist * ray.direction;
+    glm::dvec3 intersectionPoint = ray.getOrigin() + dist * ray.getDirection();
 
     // Normal vector for sphere's surface.
     glm::dvec3 normal = glm::normalize(intersectionPoint - center);

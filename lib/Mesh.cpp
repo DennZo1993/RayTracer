@@ -52,6 +52,10 @@ const MeshVertex& MeshFace::getVertex(MeshObjectIndexType idx) const {
 
 IntersectionResult
 MeshFace::intersect(const Ray &ray) const {
+  #ifndef NDEBUG
+  ray.AssertNormalized();
+  #endif // !NDEBUG
+
   // Epsilon for floating-point comparisons.
   const double EPS = 1.0e-6;
   // Vertexes that form this face.
@@ -63,17 +67,17 @@ MeshFace::intersect(const Ray &ray) const {
 
   auto E1 = V1 - V0;
   auto E2 = V2 - V0;
-  auto P = glm::cross(ray.direction, E2);
+  auto P = glm::cross(ray.getDirection(), E2);
   double det = glm::dot(E1, P);
   double invDet = 1.0 / det;
   if (det > -EPS && det < EPS)
     return IntersectionResult(); // No intersection.
-  auto T = ray.origin - V0;
+  auto T = ray.getOrigin() - V0;
   u = glm::dot(T, P) * invDet;
   if (u < 0.0 || u > 1.0)
     return IntersectionResult(); // No intersection.
   auto Q = glm::cross(T, E1);
-  v = glm::dot(ray.direction, Q) * invDet;
+  v = glm::dot(ray.getDirection(), Q) * invDet;
   if (v < 0.0 || u + v > 1.0)
     return IntersectionResult(); // No intersection.
   d = glm::dot(E2, Q) * invDet;

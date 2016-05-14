@@ -46,9 +46,11 @@ public:
   Ray getRay() const { return ray; }
 
   glm::dvec3 getIntersectionPoint() const {
-    assert(std::abs(glm::length(ray.direction) - 1.0) < 1.0e-6 &&
-           "Ray's direction must be normalized!");
-    return ray.origin + distance * ray.direction;
+    #ifndef NDEBUG
+    ray.AssertNormalized();
+    #endif // !NDEBUG
+
+    return ray.getOrigin() + distance * ray.getDirection();
   }
 
   Ray getNormalRay() const {

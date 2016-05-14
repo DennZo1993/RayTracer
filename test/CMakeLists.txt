@@ -68,4 +68,18 @@ set_target_properties(libgmock PROPERTIES
 # I couldn't make it work with INTERFACE_INCLUDE_DIRECTORIES
 include_directories("${source_dir}/include")
 
-add_subdirectory(Components)
+
+# Testing project
+file(GLOB Test_SRCS *.cpp)
+
+ADD_EXECUTABLE(Tests Tests.h ${Test_SRCS})
+
+TARGET_LINK_LIBRARIES(Tests
+    libRayTracer
+    libgtest
+    libgmock
+)
+
+add_test(NAME Tests
+         COMMAND Tests)
+

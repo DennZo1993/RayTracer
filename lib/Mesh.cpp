@@ -18,23 +18,17 @@ void MeshVertex::CalculateNormal() {
   if (faceIndexes.empty())
     return;
 
-  glm::dvec3 sumOfNormals(0.0, 0.0, 0.0);
-  double sumOfSquares = 0.0;
+  if (glm::length(normal) > 1.0e-5)
+    return;
 
-  // Calculate sum of squares for weights calculation.
-  for (const auto meshIdx : faceIndexes)
-    sumOfSquares += parentMesh.getFaces()[meshIdx].getSquare();
+  glm::dvec3 resultNormal(0.0, 0.0, 0.0);
 
   for (const auto meshIdx : faceIndexes) {
-    const auto &currentFace = parentMesh.getFaces()[meshIdx];
-
-    double currentSquare = currentFace.getSquare();
-    glm::dvec3 currentNormal = currentFace.getNormalVectorCross();
-
-    sumOfNormals += (currentSquare / sumOfSquares) * currentNormal;
+    glm::dvec3 currentNormal = parentMesh.getFaces()[meshIdx].getNormalVectorCross();
+    resultNormal = glm::normalize(resultNormal + currentNormal);
   }
 
-  normal = glm::normalize(sumOfNormals);
+  normal = resultNormal;
 }
 
 
@@ -115,7 +109,7 @@ glm::dvec3 MeshFace::getNormalVectorCross() const {
   auto P1 = getVertex(1).point;
   auto P2 = getVertex(2).point;
 
-  return glm::normalize(glm::cross(P1 - P0, P2 - P0));
+  return glm::normalize(glm::cross(P0 - P1, P2 - P1));
 }
 
 double MeshFace::getSquare() const {

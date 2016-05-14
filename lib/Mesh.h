@@ -3,6 +3,7 @@
 #include "glm\glm.hpp"
 #include "Ray.h"
 #include "IntersectionResult.h"
+#include "Object3d.h"
 #include <set>
 #include <vector>
 
@@ -57,7 +58,7 @@ struct MeshFace {
 
   // Ray intersection test.
   // Implements Möller–Trumbore intersection algorithm.
-  IntersectionResult hasIntersection(const Ray &ray) const;
+  IntersectionResult intersect(const Ray &ray) const;
 
   // Returns a normal vector in a given point, represented by
   // its barycentric coordinates (returned by hasIntersection method).
@@ -87,7 +88,7 @@ struct MeshFace {
 
 
 // Class representing an arbitrary mesh.
-class Mesh {
+class Mesh : public Object3d {
 public:
   Mesh(bool interpolate) : interpolateNormals(interpolate) {}
 
@@ -115,6 +116,8 @@ public:
 
   // Calculate normals for each vertex.
   void CalculateNormals();
+
+  IntersectionResult intersect(const Ray &ray) const;
 private:
   // Flag indicating whether normal vectors are interpolated or not.
   bool interpolateNormals;

@@ -51,7 +51,7 @@ const MeshVertex& MeshFace::getVertex(MeshObjectIndexType idx) const {
 }
 
 IntersectionResult
-MeshFace::hasIntersection(const Ray &ray) const {
+MeshFace::intersect(const Ray &ray) const {
   // Epsilon for floating-point comparisons.
   const double EPS = 1.0e-6;
   // Vertexes that form this face.
@@ -64,22 +64,22 @@ MeshFace::hasIntersection(const Ray &ray) const {
   auto E1 = V1 - V0;
   auto E2 = V2 - V0;
   auto P = glm::cross(ray.direction, E2);
-  auto det = glm::dot(E1, P);
-  if (det < EPS)
+  double det = glm::dot(E1, P);
+  double invDet = 1.0 / det;
+  if (det > -EPS && det < EPS)
     return IntersectionResult(); // No intersection.
   auto T = ray.origin - V0;
-  u = glm::dot(T, P);
-  if (u < 0.0 || u > det)
+  u = glm::dot(T, P) * invDet;
+  if (u < 0.0 || u > 1.0)
     return IntersectionResult(); // No intersection.
   auto Q = glm::cross(T, E1);
-  v = glm::dot(ray.direction, Q);
-  if (v < 0.0 || u + v > det)
+  v = glm::dot(ray.direction, Q) * invDet;
+  if (v < 0.0 || u + v > 1.0)
     return IntersectionResult(); // No intersection.
-  d = glm::dot(E2, Q);
+  d = glm::dot(E2, Q) * invDet;
+  if (d < EPS)
+    return IntersectionResult();
 
-  d /= det;
-  u /= det;
-  v /= det;
   return IntersectionResult(ray, d, getNormalVector(u, v)); // Intersection.
 }
 
@@ -158,4 +158,17 @@ Mesh::addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
 void Mesh::CalculateNormals() {
   for (auto &v : vertexes)
     v.CalculateNormal();
+}
+
+IntersectionResult Mesh::intersect(const Ray &ray) const {
+  IntersectionResult finalResult;
+  for (const auto &face : faces) {
+    IntersectionResult currentResult = face.intersect(ray);
+    if (currentResult &&
+        (!finalResult || currentResult < finalResult)) {
+      finalResult = currentResult;
+    }
+  }
+
+  return finalResult;
 }

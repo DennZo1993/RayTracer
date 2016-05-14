@@ -19,6 +19,10 @@ public:
 
   operator bool() const { return hasIntersection; }
 
+  bool operator<(const IntersectionResult &other) const {
+    return distance < other.distance;
+  }
+
 private:
   // Indicates whether an intersection occured.
   // Values below are valid only if hasIntersection is true.
@@ -37,6 +41,8 @@ private:
   // Material mat;
 
 public:
+  double getDistance() const { return distance; }
+
   Ray getRay() const { return ray; }
 
   glm::dvec3 getIntersectionPoint() const {

@@ -50,7 +50,7 @@ const MeshVertex& MeshFace::getVertex(MeshObjectIndexType idx) const {
   return parentMesh.getVertexes()[vertexIndexes[idx]];
 }
 
-MeshFace::IntersectionResult
+IntersectionResult
 MeshFace::hasIntersection(const Ray &ray) const {
   // Epsilon for floating-point comparisons.
   const double EPS = 1.0e-6;
@@ -80,7 +80,7 @@ MeshFace::hasIntersection(const Ray &ray) const {
   d /= det;
   u /= det;
   v /= det;
-  return IntersectionResult(d, u, v); // Intersection.
+  return IntersectionResult(ray, d, getNormalVector(u, v)); // Intersection.
 }
 
 glm::dvec3 MeshFace::getNormalVector(double u, double v) const {

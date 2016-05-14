@@ -2,6 +2,7 @@
 
 #include "glm\glm.hpp"
 #include "Ray.h"
+#include "IntersectionResult.h"
 #include <set>
 #include <vector>
 
@@ -53,28 +54,6 @@ struct MeshFace {
            MeshObjectIndexType idx2,
            MeshObjectIndexType idx3,
            Mesh &parent);
-
-  // Struct to store the results of intersection test.
-  struct IntersectionResult {
-    // Default constructor crates an object describing NO intersection.
-    IntersectionResult() : hasIntersection(false), distance(-1.0),
-      barycentricU(-1.0), barycentricV(-1.0) {}
-
-    // Constructs an object when intersection occurred.
-    IntersectionResult(double d, double u, double v) :
-      hasIntersection(true), distance(d), barycentricU(u), barycentricV(v) {}
-
-    operator bool() const { return hasIntersection;	}
-
-    // Indicates whether an intersection occured.
-    // Values below are valid only if hasIntersection is true.
-    bool hasIntersection;
-    // Distance from ray's origin to the intersection point.
-    double distance;
-    // Barycentric coordinates of intersection point within the triangle.
-    double barycentricU;
-    double barycentricV;
-  };
 
   // Ray intersection test.
   // Implements Möller–Trumbore intersection algorithm.

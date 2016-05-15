@@ -49,24 +49,24 @@ TEST_F(CubeMeshTests, FaceSquaresTest) {
 TEST_F(CubeMeshTests, IntersectionTest) {
   Object3d *object = Cube;
 
-  Ray ray(glm::dvec3(3.0, 2.0, -1.0), glm::dvec3(0.0, 0.0, 1.0));
+  Ray ray(glm::dvec3(3.0, 2.0, -1.0), Z_NORM_VEC);
   IntersectionResult res = object->intersect(ray);
   ASSERT_TRUE(res);
   ASSERT_DOUBLE_EQ(1.0, res.getDistance());
-  ASSERT_VEC_NEAR(glm::dvec3(0.0, 0.0, -1.0), (res.getNormalRay().getDirection()), EPS_WEAK);
+  ASSERT_VEC_NEAR(-Z_NORM_VEC, (res.getNormalRay().getDirection()), EPS_WEAK);
 
   // Test ray falling on edge of triangle.
   ray.setOrigin(glm::dvec3(3.0, 3.0, -1.0));
   res = object->intersect(ray);
   ASSERT_TRUE(res);
   ASSERT_DOUBLE_EQ(1.0, res.getDistance());
-  ASSERT_VEC_NEAR(glm::dvec3(0.0, 0.0, -1.0), (res.getNormalRay().getDirection()), EPS_WEAK);
+  ASSERT_VEC_NEAR(-Z_NORM_VEC, (res.getNormalRay().getDirection()), EPS_WEAK);
 
   // Test ray falling on vertex.
   ray.setOrigin(glm::dvec3(10.0, 5.0, 0.0));
-  ray.setDirection(glm::dvec3(-1.0, 0.0, 0.0));
+  ray.setDirection(-X_NORM_VEC);
   res = object->intersect(ray);
   ASSERT_TRUE(res);
   ASSERT_DOUBLE_EQ(5.0, res.getDistance());
-  ASSERT_VEC_NEAR(glm::dvec3(1.0, 0.0, 0.0), (res.getNormalRay().getDirection()), EPS_WEAK);
+  ASSERT_VEC_NEAR(X_NORM_VEC, (res.getNormalRay().getDirection()), EPS_WEAK);
 }

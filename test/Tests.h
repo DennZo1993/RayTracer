@@ -12,6 +12,7 @@ const double EPS_WEAK = 1.0e-7;
 const double EPS_STRONG = 1.0e-9;
 
 // Some normalized vec3 constants.
+const glm::dvec3 ZERO_VEC = glm::dvec3(0.0, 0.0, 0.0);
 const glm::dvec3 X_NORM_VEC = glm::dvec3(1.0, 0.0, 0.0);
 const glm::dvec3 Y_NORM_VEC = glm::dvec3(0.0, 1.0, 0.0);
 const glm::dvec3 Z_NORM_VEC = glm::dvec3(0.0, 0.0, 1.0);

@@ -22,17 +22,17 @@ struct PointLight {
 
   #ifndef NDEBUG
   void AssertValueBounds() const {
-    assert(ambientColor.r >= 0.0 && ambientColor.r <= 255.0 &&
-           ambientColor.g >= 0.0 && ambientColor.g <= 255.0 &&
-           ambientColor.b >= 0.0 && ambientColor.b <= 255.0 &&
+    assert(ambientColor.r >= 0.0 && ambientColor.r <= 1.0 &&
+           ambientColor.g >= 0.0 && ambientColor.g <= 1.0 &&
+           ambientColor.b >= 0.0 && ambientColor.b <= 1.0 &&
            "Light's ambient color values out of bounds!");
-    assert(specularColor.r >= 0.0 && specularColor.r <= 255.0 &&
-           specularColor.g >= 0.0 && specularColor.g <= 255.0 &&
-           specularColor.b >= 0.0 && specularColor.b <= 255.0 &&
+    assert(specularColor.r >= 0.0 && specularColor.r <= 1.0 &&
+           specularColor.g >= 0.0 && specularColor.g <= 1.0 &&
+           specularColor.b >= 0.0 && specularColor.b <= 1.0 &&
            "Light's specular color values out of bounds!");
-    assert(diffuseColor.r >= 0.0 && diffuseColor.r <= 255.0 &&
-           diffuseColor.g >= 0.0 && diffuseColor.g <= 255.0 &&
-           diffuseColor.b >= 0.0 && diffuseColor.b <= 255.0 &&
+    assert(diffuseColor.r >= 0.0 && diffuseColor.r <= 1.0 &&
+           diffuseColor.g >= 0.0 && diffuseColor.g <= 1.0 &&
+           diffuseColor.b >= 0.0 && diffuseColor.b <= 1.0 &&
            "Light's diffuse color values out of bounds!");
   }
   #endif // !NDEBUG

@@ -2,7 +2,8 @@
 #include "Sphere.h"
 
 TEST(SphereTests, IntersectionTest) {
-  Object3d *s1 = new Sphere(glm::dvec3(0.0, 0.0, 0.0), 5.0);
+  Object3d *s1 = new Sphere(glm::dvec3(0.0, 0.0, 0.0), 5.0,
+                            testMaterial1);
 
   // 2-points intersection.
   Ray ray1(glm::dvec3(10.0, 0.0, 0.0), glm::dvec3(-1.0, 0.0, 0.0));

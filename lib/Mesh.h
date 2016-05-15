@@ -4,6 +4,7 @@
 #include "Ray.h"
 #include "IntersectionResult.h"
 #include "Object3d.h"
+#include "Material.h"
 #include <set>
 #include <vector>
 
@@ -48,12 +49,12 @@ struct MeshVertex {
 //   2. Intersection with a ray.
 //   3. Calculation of normal vectors that form a smooth vector field.
 // TODO:
-//   1. Material id;
-//   2. <some other useful info>.
+//   1. <some other useful info>.
 struct MeshFace {
   MeshFace(MeshObjectIndexType idx1,
            MeshObjectIndexType idx2,
            MeshObjectIndexType idx3,
+           const Material &mat,
            Mesh &parent);
 
   // Ray intersection test.
@@ -82,6 +83,9 @@ struct MeshFace {
   // Array of indexes of vertexes that form this face.
   MeshObjectIndexType vertexIndexes[VertexesInFace];
 
+  // Material.
+  const Material &material;
+
   // Reference to a Mesh this face belongs to. Used to access vertexes.
   Mesh &parentMesh;
 };
@@ -90,7 +94,8 @@ struct MeshFace {
 // Class representing an arbitrary mesh.
 class Mesh : public Object3d {
 public:
-  Mesh(bool interpolate) : interpolateNormals(interpolate) {}
+  Mesh(bool interpolate, const Material &mat) :
+    interpolateNormals(interpolate), material(mat) {}
 
   bool getInterpolateNormals() const { return interpolateNormals; }
   const std::vector<MeshVertex>& getVertexes() const {
@@ -108,11 +113,23 @@ public:
                               MeshObjectIndexType idx2,
                               MeshObjectIndexType idx3);
 
+  MeshObjectIndexType addFace(MeshObjectIndexType idx1,
+                              MeshObjectIndexType idx2,
+                              MeshObjectIndexType idx3,
+                              const Material &mat);
+
   // Add quad face (ccw).
   // Adds two triangle faces (ccw) and returns their indexes.
   std::pair<MeshObjectIndexType, MeshObjectIndexType>
   addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
               MeshObjectIndexType idx3, MeshObjectIndexType idx4);
+
+  // Add quad face (ccw).
+  // Adds two triangle faces (ccw) and returns their indexes.
+  std::pair<MeshObjectIndexType, MeshObjectIndexType>
+  addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
+              MeshObjectIndexType idx3, MeshObjectIndexType idx4,
+              const Material &mat);
 
   // Calculate normals for each vertex.
   void CalculateNormals();
@@ -124,4 +141,6 @@ private:
 
   std::vector<MeshVertex> vertexes;
   std::vector<MeshFace> faces;
+
+  const Material &material;
 };

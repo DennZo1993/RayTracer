@@ -36,7 +36,9 @@ void MeshVertex::CalculateNormal() {
 MeshFace::MeshFace(MeshObjectIndexType idx1,
                    MeshObjectIndexType idx2,
                    MeshObjectIndexType idx3,
-                   Mesh &parent) : parentMesh(parent) {
+                   const Material &mat,
+                   Mesh &parent) :
+  material(mat), parentMesh(parent) {
   // A face can only be constructed from pairwise-dfferent vertexes.
   assert(idx1 != idx2 && idx1 != idx3 && idx2 != idx3 &&
          "Cannot construct a face from less than 3 different vertexes!");
@@ -84,7 +86,7 @@ MeshFace::intersect(const Ray &ray) const {
   if (d < EPS)
     return IntersectionResult();
 
-  return IntersectionResult(ray, d, getNormalVector(u, v)); // Intersection.
+  return IntersectionResult(ray, d, getNormalVector(u, v), &material); // Intersection.
 }
 
 glm::dvec3 MeshFace::getNormalVector(double u, double v) const {
@@ -141,7 +143,16 @@ MeshObjectIndexType
 Mesh::addFace(MeshObjectIndexType idx1,
               MeshObjectIndexType idx2,
               MeshObjectIndexType idx3) {
-  faces.push_back(MeshFace(idx1, idx2, idx3, *this));
+  // Use material of this Mesh.
+  return addFace(idx1, idx2, idx3, material);
+}
+
+MeshObjectIndexType
+Mesh::addFace(MeshObjectIndexType idx1,
+              MeshObjectIndexType idx2,
+              MeshObjectIndexType idx3,
+              const Material &mat) {
+  faces.push_back(MeshFace(idx1, idx2, idx3, mat, *this));
   MeshObjectIndexType newFaceIndex = faces.size() - 1;
   // Add current face index to its vertexes.
   vertexes[idx1].faceIndexes.insert(newFaceIndex);
@@ -154,8 +165,15 @@ Mesh::addFace(MeshObjectIndexType idx1,
 std::pair<MeshObjectIndexType, MeshObjectIndexType>
 Mesh::addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
                   MeshObjectIndexType idx3, MeshObjectIndexType idx4) {
-  MeshObjectIndexType i1 = addFace(idx1, idx2, idx3);
-  MeshObjectIndexType i2 = addFace(idx1, idx3, idx4);
+  return addQuadFace(idx1, idx2, idx3, idx4, material);
+}
+
+std::pair<MeshObjectIndexType, MeshObjectIndexType>
+Mesh::addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
+                  MeshObjectIndexType idx3, MeshObjectIndexType idx4,
+                  const Material &mat) {
+  MeshObjectIndexType i1 = addFace(idx1, idx2, idx3, mat);
+  MeshObjectIndexType i2 = addFace(idx1, idx3, idx4, mat);
   return std::make_pair(i1, i2);
 }
 

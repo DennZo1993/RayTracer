@@ -4,7 +4,7 @@
 class CubeMeshTests : public ::testing::Test {
 public:
   static void SetUpTestCase() {
-    Cube = new Mesh(false);
+    Cube = new Mesh(false, testMaterial1);
 
     auto v0 = Cube->addVertex(glm::dvec3(0.0, 0.0, 0.0));
     auto v1 = Cube->addVertex(glm::dvec3(5.0, 0.0, 0.0));

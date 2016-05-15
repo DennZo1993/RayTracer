@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Object3d.h"
+#include "Material.h"
 
 class Sphere : public Object3d {
 public:
-  Sphere(const glm::dvec3 c, double r) :
-    center(c), radius(r) {}
+  Sphere(const glm::dvec3 c, double r,
+         const Material &mat) :
+    center(c), radius(r), material(mat) {}
 
   IntersectionResult intersect(const Ray &ray) const {
     #ifndef NDEBUG
@@ -40,12 +42,13 @@ public:
     // Normal vector for sphere's surface.
     glm::dvec3 normal = glm::normalize(intersectionPoint - center);
 
-    return IntersectionResult(ray, dist, normal);
+    return IntersectionResult(ray, dist, normal, &material);
   }
 
 private:
   glm::dvec3 center;
   double radius;
+  const Material &material;
 
 public:
   double getRadius() const { return radius; }

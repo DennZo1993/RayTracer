@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ray.h"
+#include "Material.h"
 
 // Struct to store the results of intersection test.
 class IntersectionResult {
@@ -11,11 +12,15 @@ public:
     // Fake ray, it must not be used in this case.
     ray(glm::dvec3(0.0, 0.0, 0.0), glm::dvec3(0.0, 0.0, 0.0)),
     // Fake normal vector, it must not be used in this case.
-    normal(glm::dvec3(0.0, 0.0, 0.0)) {}
+    normal(glm::dvec3(0.0, 0.0, 0.0)),
+    // Empty material.
+    material(nullptr) {}
 
   // Constructs an object when intersection occurred.
-  IntersectionResult(const Ray &r, double d, const glm::dvec3 &n) :
-    hasIntersection(true), distance(d), ray(r), normal(n) {}
+  IntersectionResult(const Ray &r, double d, const glm::dvec3 &n,
+                     const Material *mat) :
+    hasIntersection(true), distance(d), ray(r), normal(n),
+    material(mat) {}
 
   operator bool() const { return hasIntersection; }
 
@@ -38,7 +43,7 @@ private:
   glm::dvec3 normal;
 
   // TODO: Meterial of intersection surface.
-  // Material mat;
+  const Material *material;
 
 public:
   double getDistance() const { return distance; }
@@ -58,4 +63,10 @@ public:
            "Normal must be normalized!");
     return Ray(getIntersectionPoint(), normal);
   }
+
+  glm::dvec3 getNormalVector() const {
+    return normal;
+  }
+
+  const Material *getMaterialPtr() const { return material; }
 };

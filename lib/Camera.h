@@ -7,7 +7,7 @@ class Camera {
 public:
   // === Constructors ===
 
-  Camera(const glm::dvec3 &pos, const glm::dvec3 &dir, const glm::vec2 res);
+  Camera(const glm::dvec3 &pos, const glm::dvec3 &dir, const glm::vec2 &res);
   ~Camera();
 
   // === Camera movement ===

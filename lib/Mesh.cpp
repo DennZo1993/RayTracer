@@ -1,18 +1,11 @@
 #include "Mesh.h"
 
 // === MeshVertex struct ===
-MeshVertex::MeshVertex(Mesh &parent) :
-  point(0.0, 0.0, 0.0), normal(0.0, 0.0, 0.0), faceIndexes(),
-  parentMesh(parent) {}
-
-MeshVertex::MeshVertex(const glm::dvec3 &p, Mesh &parent) :
-  point(p), normal(0.0, 0.0, 0.0), faceIndexes(),
-  parentMesh(parent) {}
-
-MeshVertex::MeshVertex(const glm::dvec3 &p,
-                       const glm::dvec3 &n,
-                       Mesh &parent) :
-  point(p), normal(n), faceIndexes(), parentMesh(parent) {}
+MeshVertex::MeshVertex(const Mesh *parent,
+                       glm::dvec3 p, glm::dvec3 n) :
+  point(p), normal(n), faceIndexes(), parentMesh(parent) {
+  assert(parent && "Parent mesh of MeshVertex is null!");
+}
 
 void MeshVertex::CalculateNormal() {
   if (faceIndexes.empty())
@@ -23,8 +16,9 @@ void MeshVertex::CalculateNormal() {
 
   glm::dvec3 resultNormal(0.0, 0.0, 0.0);
 
+  assert(parentMesh && "Parent mesh of MeshVertex is null!");
   for (const auto meshIdx : faceIndexes) {
-    glm::dvec3 currentNormal = parentMesh.getFaces()[meshIdx].getNormalVectorCross();
+    glm::dvec3 currentNormal = parentMesh->getFaces()[meshIdx].getNormalVectorCross();
     resultNormal = glm::normalize(resultNormal + currentNormal);
   }
 
@@ -36,9 +30,10 @@ void MeshVertex::CalculateNormal() {
 MeshFace::MeshFace(MeshObjectIndexType idx1,
                    MeshObjectIndexType idx2,
                    MeshObjectIndexType idx3,
-                   const Material &mat,
-                   Mesh &parent) :
+                   const Material *mat,
+                   const Mesh *parent) :
   material(mat), parentMesh(parent) {
+  assert(parentMesh && "Parent mesh of MeshFace is null!");
   // A face can only be constructed from pairwise-dfferent vertexes.
   assert(idx1 != idx2 && idx1 != idx3 && idx2 != idx3 &&
          "Cannot construct a face from less than 3 different vertexes!");
@@ -49,7 +44,7 @@ MeshFace::MeshFace(MeshObjectIndexType idx1,
 
 const MeshVertex& MeshFace::getVertex(MeshObjectIndexType idx) const {
   assert(idx >= 0 && idx <= 2 && "Vertex index in face out of bounds!");
-  return parentMesh.getVertexes()[vertexIndexes[idx]];
+  return parentMesh->getVertexes()[vertexIndexes[idx]];
 }
 
 IntersectionResult
@@ -86,11 +81,12 @@ MeshFace::intersect(const Ray &ray) const {
   if (d < EPS)
     return IntersectionResult();
 
-  return IntersectionResult(ray, d, getNormalVector(u, v), &material); // Intersection.
+  return IntersectionResult(ray, d, getNormalVector(u, v), material); // Intersection.
 }
 
 glm::dvec3 MeshFace::getNormalVector(double u, double v) const {
-  return parentMesh.getInterpolateNormals()
+  assert(parentMesh && "Parent mesh of MeshFace is null!");
+  return parentMesh->getInterpolateNormals()
     ? getNormalVectorInterpolated(u, v)
     : getNormalVectorCross();
 }
@@ -135,7 +131,7 @@ double MeshFace::getSquare() const {
 // === Mesh ===
 MeshObjectIndexType Mesh::addVertex(const glm::dvec3 &p, 
                                     const glm::dvec3 &n) {
-  vertexes.push_back(MeshVertex(p, n, *this));
+  vertexes.push_back(MeshVertex(this, p, n));
   return vertexes.size() - 1;
 }
 
@@ -151,8 +147,8 @@ MeshObjectIndexType
 Mesh::addFace(MeshObjectIndexType idx1,
               MeshObjectIndexType idx2,
               MeshObjectIndexType idx3,
-              const Material &mat) {
-  faces.push_back(MeshFace(idx1, idx2, idx3, mat, *this));
+              const Material *mat) {
+  faces.push_back(MeshFace(idx1, idx2, idx3, mat, this));
   MeshObjectIndexType newFaceIndex = faces.size() - 1;
   // Add current face index to its vertexes.
   vertexes[idx1].faceIndexes.insert(newFaceIndex);
@@ -171,7 +167,7 @@ Mesh::addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
 std::pair<MeshObjectIndexType, MeshObjectIndexType>
 Mesh::addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
                   MeshObjectIndexType idx3, MeshObjectIndexType idx4,
-                  const Material &mat) {
+                  const Material *mat) {
   MeshObjectIndexType i1 = addFace(idx1, idx2, idx3, mat);
   MeshObjectIndexType i2 = addFace(idx1, idx3, idx4, mat);
   return std::make_pair(i1, i2);

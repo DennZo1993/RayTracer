@@ -22,9 +22,9 @@ typedef unsigned int MeshObjectIndexType;
 //
 // Normally in a mesh each vertex has at least 1 adjacent face.
 struct MeshVertex {
-  MeshVertex(Mesh &parent);
-  MeshVertex(const glm::dvec3 &p, Mesh &parent);
-  MeshVertex(const glm::dvec3 &p, const glm::dvec3 &n, Mesh &parent);
+  MeshVertex(const Mesh *parent,
+             glm::dvec3 p = glm::dvec3(0.0, 0.0, 0.0),
+             glm::dvec3 n = glm::dvec3(0.0, 0.0, 0.0));
 
   // Calculate normal vector from adjacent faces.
   // For each adjacent face use its flat normal (cross product),
@@ -38,8 +38,8 @@ struct MeshVertex {
   // Vector of indexes of adjacent faces.
   std::set<MeshObjectIndexType> faceIndexes;
 
-  // Reference to a Mesh this face belongs to. Used to access faces.
-  Mesh &parentMesh;
+  // Pointer to a Mesh this face belongs to. Used to access faces.
+  const Mesh *parentMesh;
 };
 
 
@@ -54,8 +54,8 @@ struct MeshFace {
   MeshFace(MeshObjectIndexType idx1,
            MeshObjectIndexType idx2,
            MeshObjectIndexType idx3,
-           const Material &mat,
-           Mesh &parent);
+           const Material *mat,
+           const Mesh *parent);
 
   // Ray intersection test.
   // Implements Möller–Trumbore intersection algorithm.
@@ -84,17 +84,17 @@ struct MeshFace {
   MeshObjectIndexType vertexIndexes[VertexesInFace];
 
   // Material.
-  const Material &material;
+  const Material *material;
 
-  // Reference to a Mesh this face belongs to. Used to access vertexes.
-  Mesh &parentMesh;
+  // Pointer to a Mesh this face belongs to. Used to access vertexes.
+  const Mesh *parentMesh;
 };
 
 
 // Class representing an arbitrary mesh.
 class Mesh : public Object3d {
 public:
-  Mesh(bool interpolate, const Material &mat) :
+  Mesh(bool interpolate, const Material *mat) :
     interpolateNormals(interpolate), material(mat) {}
 
   bool getInterpolateNormals() const { return interpolateNormals; }
@@ -116,7 +116,7 @@ public:
   MeshObjectIndexType addFace(MeshObjectIndexType idx1,
                               MeshObjectIndexType idx2,
                               MeshObjectIndexType idx3,
-                              const Material &mat);
+                              const Material *mat);
 
   // Add quad face (ccw).
   // Adds two triangle faces (ccw) and returns their indexes.
@@ -129,7 +129,7 @@ public:
   std::pair<MeshObjectIndexType, MeshObjectIndexType>
   addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
               MeshObjectIndexType idx3, MeshObjectIndexType idx4,
-              const Material &mat);
+              const Material *mat);
 
   // Calculate normals for each vertex.
   void CalculateNormals();
@@ -142,5 +142,5 @@ private:
   std::vector<MeshVertex> vertexes;
   std::vector<MeshFace> faces;
 
-  const Material &material;
+  const Material *material;
 };

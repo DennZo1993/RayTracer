@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 Camera::Camera(const glm::dvec3 &pos, const glm::dvec3 &dir,
-               const glm::vec2 res)
+               const glm::vec2 &res)
   : position(pos), direction(dir), resolution(res) {
   Normalize();
 }

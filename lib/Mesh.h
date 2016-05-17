@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glm\glm.hpp"
+#include "glm/glm.hpp"
 #include "Ray.h"
 #include "IntersectionResult.h"
 #include "Object3d.h"

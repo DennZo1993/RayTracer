@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glm\glm.hpp"
+#include "glm/glm.hpp"
 
 struct PointLight {
   PointLight(glm::dvec3 p) :

@@ -50,7 +50,7 @@ ExternalProject_Add(
 
 # Create a libgmock target to be used as a dependency by test programs
 add_library(libgmock IMPORTED STATIC GLOBAL)
-add_dependencies(libgmock gmock)
+add_dependencies(libgmock gmock gtest)
 
 # Set gmock properties
 ExternalProject_Get_Property(gmock source_dir binary_dir)

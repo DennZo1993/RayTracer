@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gtest\gtest.h"
-#include "glm\glm.hpp"
+#include "gtest/gtest.h"
+#include "glm/glm.hpp"
 #include "Material.h"
 
 #define ASSERT_VEC_NEAR(vec1, vec2, epsilon) \

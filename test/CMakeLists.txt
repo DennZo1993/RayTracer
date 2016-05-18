@@ -6,7 +6,7 @@ include(ExternalProject)
 # Download and install GoogleTest
 ExternalProject_Add(
     gtest
-    URL https://googletest.googlecode.com/files/gtest-1.7.0.zip
+    URL http://googletest.googlecode.com/files/gtest-1.7.0.zip
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/gtest
     CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=DebugLibs
@@ -37,7 +37,7 @@ include_directories("${source_dir}/include")
 # Download and install GoogleMock
 ExternalProject_Add(
     gmock
-    URL https://googlemock.googlecode.com/files/gmock-1.7.0.zip
+    URL http://googlemock.googlecode.com/files/gmock-1.7.0.zip
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/gmock
     CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=DebugLibs

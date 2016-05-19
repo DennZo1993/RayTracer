@@ -3,14 +3,20 @@ find_package(Threads REQUIRED)
 # Enable ExternalProject CMake module
 include(ExternalProject)
 
+if (MSVC)
+  set(LibSuffix ".lib")
+else()
+  set(LibSuffix ".a")
+endif()
+
 # Download and install GoogleTest
 ExternalProject_Add(
     gtest
     URL http://googletest.googlecode.com/files/gtest-1.7.0.zip
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/gtest
     CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-               -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=DebugLibs
-               -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE:PATH=ReleaseLibs
+               -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=
+               -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE:PATH=
                -Dgtest_force_shared_crt=ON
     # Disable install step
     INSTALL_COMMAND ""
@@ -22,14 +28,8 @@ add_dependencies(libgtest gtest)
 
 # Set gtest properties
 ExternalProject_Get_Property(gtest source_dir binary_dir)
-if(MSVC)
-  set(Suffix ".lib")
-else()
-  set(Suffix ".a")
-  set(Pthread "-pthread")
-endif()
 set_target_properties(libgtest PROPERTIES
-    "IMPORTED_LOCATION" "${binary_dir}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${Suffix}"
+    "IMPORTED_LOCATION" "${binary_dir}/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${LibSuffix}"
     "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}")
 # I couldn't make it work with INTERFACE_INCLUDE_DIRECTORIES
 include_directories("${source_dir}/include")
@@ -40,8 +40,8 @@ ExternalProject_Add(
     URL http://googlemock.googlecode.com/files/gmock-1.7.0.zip
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/gmock
     CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-               -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=DebugLibs
-               -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE:PATH=ReleaseLibs
+               -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=
+               -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE:PATH=
                -Dgtest_force_shared_crt=ON
                -Dgmock_force_shared_crt=ON
     # Disable install step
@@ -54,14 +54,8 @@ add_dependencies(libgmock gmock gtest)
 
 # Set gmock properties
 ExternalProject_Get_Property(gmock source_dir binary_dir)
-if(MSVC)
-  set(Suffix ".lib")
-else()
-  set(Suffix ".a")
-  set(Pthread "-pthread")
-endif()
 set_target_properties(libgmock PROPERTIES
-    "IMPORTED_LOCATION" "${binary_dir}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gmock${Suffix}"
+    "IMPORTED_LOCATION" "${binary_dir}/${CMAKE_FIND_LIBRARY_PREFIXES}gmock${LibSuffix}"
     "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
 #    "INTERFACE_INCLUDE_DIRECTORIES" "${source_dir}/include"
 )
@@ -80,6 +74,4 @@ TARGET_LINK_LIBRARIES(Tests
     libgmock
 )
 
-add_test(NAME Tests
-         COMMAND Tests)
-
+add_test(NAME Tests COMMAND Tests)

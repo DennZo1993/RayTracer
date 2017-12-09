@@ -92,15 +92,16 @@ glm::dvec3 MeshFace::getNormalVector(double u, double v) const {
 }
 
 glm::dvec3 MeshFace::getNormalVectorInterpolated(double u, double v) const {
-  const double EPS = 1.0e-6;
-
   auto V0 = getVertex(0).normal;
   auto V1 = getVertex(1).normal;
   auto V2 = getVertex(2).normal;
 
+#ifndef NDEBUG
+  const double EPS = 1.0e-6;
   assert(glm::length(V0) > EPS && "Vertex 0 has incorrect normal!");
   assert(glm::length(V1) > EPS && "Vertex 1 has incorrect normal!");
   assert(glm::length(V2) > EPS && "Vertex 2 has incorrect normal!");
+#endif
 
   glm::dvec3 result = (1.0 - u - v) * V0 + u * V1 + v * V2;
   return glm::normalize(result);

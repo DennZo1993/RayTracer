@@ -8,6 +8,7 @@ set (
   Camera.cpp
   Mesh.cpp
   Ray.cpp
+  Sphere.cpp
 )
 
 # Compiler flags for this target

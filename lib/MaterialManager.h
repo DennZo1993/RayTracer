@@ -9,11 +9,11 @@ class MaterialManager {
   MaterialManager(const MaterialManager &other) = delete;
   MaterialManager& operator= (const MaterialManager &other) = delete;
 
-  void addMaterial(const std::string &name, const Material &mat) {
+  void AddMaterial(const std::string &name, const Material &mat) {
     materials[name] = mat;
   }
 
-  const Material &getMaterialByName(const std::string &name) const {
+  const Material &GetMaterialByName(const std::string &name) const {
     auto it = materials.find(name);
     assert(it != materials.end() && "Material not found!");
     return it->second;

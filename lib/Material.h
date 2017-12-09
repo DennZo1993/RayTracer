@@ -9,17 +9,11 @@ public:
     ambientColor(a), specularColor(s), diffuseColor(d),
     shininess(shine) {}
 
-private:
-  glm::dvec3 ambientColor;
-  glm::dvec3 specularColor;
-  glm::dvec3 diffuseColor;
-  double shininess;
-
 public:
-  glm::dvec3 getAmbient() const { return ambientColor; }
-  glm::dvec3 getSpecular() const { return specularColor; }
-  glm::dvec3 getDiffuse() const { return diffuseColor; }
-  double getShininess() const { return shininess; }
+  glm::dvec3 GetAmbient() const { return ambientColor; }
+  glm::dvec3 GetSpecular() const { return specularColor; }
+  glm::dvec3 GetDiffuse() const { return diffuseColor; }
+  double GetShininess() const { return shininess; }
 
   #ifndef NDEBUG
   void AssertValueBounds() const {
@@ -37,4 +31,10 @@ public:
            "Material's diffuse color values out of bounds!");
   }
   #endif // !NDEBUG
+
+private:
+  glm::dvec3 ambientColor;
+  glm::dvec3 specularColor;
+  glm::dvec3 diffuseColor;
+  double shininess;
 };

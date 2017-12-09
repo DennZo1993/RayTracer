@@ -12,7 +12,7 @@
 class Mesh;
 
 // Type of an abstract index.
-typedef unsigned int MeshObjectIndexType;
+using TMeshIndex = unsigned int;
 
 // Struct representing a vertex in mesh.
 // MeshVertex manages:
@@ -36,7 +36,7 @@ struct MeshVertex {
   // Normal vector (of length 1).
   glm::dvec3 normal;
   // Vector of indexes of adjacent faces.
-  std::set<MeshObjectIndexType> faceIndexes;
+  std::set<TMeshIndex> faceIndexes;
 
   // Pointer to a Mesh this face belongs to. Used to access faces.
   const Mesh *parentMesh;
@@ -51,37 +51,37 @@ struct MeshVertex {
 // TODO:
 //   1. <some other useful info>.
 struct MeshFace {
-  MeshFace(MeshObjectIndexType idx1,
-           MeshObjectIndexType idx2,
-           MeshObjectIndexType idx3,
+  MeshFace(TMeshIndex idx1,
+           TMeshIndex idx2,
+           TMeshIndex idx3,
            const Material *mat,
            const Mesh *parent);
 
   // Ray intersection test.
-  // Implements Möller–Trumbore intersection algorithm.
-  IntersectionResult intersect(const Ray &ray) const;
+  // Implements Möller-Trumbore intersection algorithm.
+  IntersectionResult Intersect(const Ray &ray) const;
 
   // Returns a normal vector in a given point, represented by
   // its barycentric coordinates (returned by hasIntersection method).
   // Normals form a smooth vector field.
-  glm::dvec3 getNormalVector(double u, double v) const;
-  glm::dvec3 getNormalVectorInterpolated(double u, double v) const;
-  glm::dvec3 getNormalVectorCross() const;
+  glm::dvec3 GetNormalVector(double u, double v) const;
+  glm::dvec3 GetNormalVectorInterpolated(double u, double v) const;
+  glm::dvec3 GetNormalVectorCross() const;
 
   // Get square of the triangle.
-  double getSquare() const;
+  double GetSquare() const;
 
   // Get one of 3 vertexes that form this face.
   // Index \p idx must be in range of [0..2].
-  const MeshVertex& getVertex(MeshObjectIndexType idx) const;
-  const MeshVertex& operator[](MeshObjectIndexType idx) const {
-    return getVertex(idx);
+  const MeshVertex& GetVertex(TMeshIndex idx) const;
+  const MeshVertex& operator[](TMeshIndex idx) const {
+    return GetVertex(idx);
   }
 
   static const unsigned int VertexesInFace = 3;
 
   // Array of indexes of vertexes that form this face.
-  MeshObjectIndexType vertexIndexes[VertexesInFace];
+  TMeshIndex vertexIndexes[VertexesInFace];
 
   // Material.
   const Material *material;
@@ -92,55 +92,58 @@ struct MeshFace {
 
 
 // Class representing an arbitrary mesh.
-class Mesh : public Object3d {
+class Mesh : public IObject3D {
 public:
   Mesh(bool interpolate, const Material *mat) :
     interpolateNormals(interpolate), material(mat) {}
 
-  bool getInterpolateNormals() const { return interpolateNormals; }
-  const std::vector<MeshVertex>& getVertexes() const {
-    return vertexes;
-  }
-  const std::vector<MeshFace>& getFaces() const { return faces; }
+public:
+  using TVertexes = std::vector<MeshVertex>;
+  using TFaces = std::vector<MeshFace>;
 
-  std::size_t getNumVertexes() const { return vertexes.size(); }
-  std::size_t getNumFaces() const { return faces.size(); }
+  bool GetInterpolateNormals() const { return interpolateNormals; }
+  const TVertexes& GetVertexes() const { return vertexes; }
+  const TFaces&    GetFaces() const { return faces; }
 
-  MeshObjectIndexType addVertex(const glm::dvec3 &p,
-                                const glm::dvec3 &n = glm::dvec3(0.0, 0.0, 0.0));
+  std::size_t GetNumVertexes() const { return vertexes.size(); }
+  std::size_t GetNumFaces() const { return faces.size(); }
 
-  MeshObjectIndexType addFace(MeshObjectIndexType idx1,
-                              MeshObjectIndexType idx2,
-                              MeshObjectIndexType idx3);
+  TMeshIndex AddVertex(const glm::dvec3 &p,
+                       const glm::dvec3 &n = glm::dvec3(0.0, 0.0, 0.0));
 
-  MeshObjectIndexType addFace(MeshObjectIndexType idx1,
-                              MeshObjectIndexType idx2,
-                              MeshObjectIndexType idx3,
-                              const Material *mat);
+  TMeshIndex AddFace(TMeshIndex idx1,
+                     TMeshIndex idx2,
+                     TMeshIndex idx3);
 
-  // Add quad face (ccw).
-  // Adds two triangle faces (ccw) and returns their indexes.
-  std::pair<MeshObjectIndexType, MeshObjectIndexType>
-  addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
-              MeshObjectIndexType idx3, MeshObjectIndexType idx4);
+  TMeshIndex AddFace(TMeshIndex idx1,
+                     TMeshIndex idx2,
+                     TMeshIndex idx3,
+                     const Material *mat);
 
   // Add quad face (ccw).
   // Adds two triangle faces (ccw) and returns their indexes.
-  std::pair<MeshObjectIndexType, MeshObjectIndexType>
-  addQuadFace(MeshObjectIndexType idx1, MeshObjectIndexType idx2,
-              MeshObjectIndexType idx3, MeshObjectIndexType idx4,
+  std::pair<TMeshIndex, TMeshIndex>
+  AddQuadFace(TMeshIndex idx1, TMeshIndex idx2,
+              TMeshIndex idx3, TMeshIndex idx4);
+
+  // Add quad face (ccw).
+  // Adds two triangle faces (ccw) and returns their indexes.
+  std::pair<TMeshIndex, TMeshIndex>
+  AddQuadFace(TMeshIndex idx1, TMeshIndex idx2,
+              TMeshIndex idx3, TMeshIndex idx4,
               const Material *mat);
 
   // Calculate normals for each vertex.
   void CalculateNormals();
 
-  IntersectionResult intersect(const Ray &ray) const;
+  IntersectionResult Intersect(const Ray &ray) const override;
+
 private:
   // Flag indicating whether normal vectors are interpolated or not.
   bool interpolateNormals;
 
-  std::vector<MeshVertex> vertexes;
-  std::vector<MeshFace> faces;
+  TVertexes vertexes;
+  TFaces faces;
 
   const Material *material;
 };

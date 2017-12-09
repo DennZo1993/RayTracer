@@ -3,53 +3,21 @@
 #include "Object3d.h"
 #include "Material.h"
 
-class Sphere : public Object3d {
+class Sphere : public IObject3D {
 public:
-  Sphere(const glm::dvec3 c, double r,
-         const Material &mat) :
-    center(c), radius(r), material(mat) {}
+  Sphere(const glm::dvec3 c, double r, const Material &mat)
+    : center(c)
+    , radius(r)
+    , material(mat)
+  {}
 
-  IntersectionResult intersect(const Ray &ray) const {
-    #ifndef NDEBUG
-    ray.AssertNormalized();
-    #endif // !NDEBUG
+  IntersectionResult Intersect(const Ray &ray) const override;
 
-    auto M = ray.getOrigin() - center;
-    double b = glm::dot(M, ray.getDirection());
-    double c = glm::dot(M, M) - radius * radius;
-
-    // Ray’s origin is outside (c > 0) and ray is pointing away (b > 0).
-    if (c > 0.0 && b > 0.0)
-      return IntersectionResult(); // No intersection.
-
-    double discr = b * b - c;
-
-    // Negative discr means no intersection.
-    if (discr < 0)
-      return IntersectionResult(); // No intersection.
-
-    double dist = -b - sqrt(discr);
-
-    // If dist is negative, ray started inside of sphere.
-    if (dist < 0.0) {
-      // Use the other root then.
-      dist = -b + sqrt(discr);
-    }
-
-    // Point of intersection.
-    glm::dvec3 intersectionPoint = ray.getOrigin() + dist * ray.getDirection();
-
-    // Normal vector for sphere's surface.
-    glm::dvec3 normal = glm::normalize(intersectionPoint - center);
-
-    return IntersectionResult(ray, dist, normal, &material);
-  }
+public:
+  double GetRadius() const { return radius; }
 
 private:
   glm::dvec3 center;
   double radius;
   const Material &material;
-
-public:
-  double getRadius() const { return radius; }
 };

@@ -36,8 +36,8 @@ private:
 
 public:
   // Getters.
-  glm::dvec3 getPosition() const { return position; }
-  glm::dvec3 getDirection() const { return direction; }
-  glm::uvec2 getResolution() const { return resolution; }
+  glm::dvec3 GetPosition() const { return position; }
+  glm::dvec3 GetDirection() const { return direction; }
+  glm::uvec2 GetResolution() const { return resolution; }
 };
 

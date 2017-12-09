@@ -3,7 +3,9 @@
 #include "IntersectionResult.h"
 
 // Abstract class representing a 3D object.
-class Object3d {
+class IObject3D {
 public:
-  virtual IntersectionResult intersect(const Ray &ray) const = 0;
+  virtual ~IObject3D() = default;
+
+  virtual IntersectionResult Intersect(const Ray &ray) const = 0;
 };

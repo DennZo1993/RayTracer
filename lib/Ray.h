@@ -8,6 +8,7 @@ class Ray {
 public:
   Ray(const glm::dvec3 &orig, const glm::dvec3 &dir);
 
+public:
   // Cast a reflection ray using origin and direction of \p normalRay.
   // Preconditions:
   //   1. Direction of *this is normalized.
@@ -18,16 +19,12 @@ public:
   //   2. Direction of resulting ray is normalized.
   Ray Reflect(const Ray &normalRay) const;
 
-private:
-  glm::dvec3 origin;
-  glm::dvec3 direction;
-
 public:
-  void setOrigin(const glm::dvec3 &o) { origin = o; }
-  glm::dvec3 getOrigin() const { return origin; }
+  void SetOrigin(const glm::dvec3 &o) { origin = o; }
+  glm::dvec3 GetOrigin() const { return origin; }
 
-  void setDirection(const glm::dvec3 &d) { direction = glm::normalize(d); }
-  glm::dvec3 getDirection() const { return direction; }
+  void SetDirection(const glm::dvec3 &d) { direction = glm::normalize(d); }
+  glm::dvec3 GetDirection() const { return direction; }
 
   // Debug assertion: ray's direction must be normalized.
   #ifndef NDEBUG
@@ -36,4 +33,8 @@ public:
            "Ray's direction must be normalized!");
   }
   #endif
+
+private:
+  glm::dvec3 origin;
+  glm::dvec3 direction;
 };

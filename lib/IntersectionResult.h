@@ -28,6 +28,31 @@ public:
     return distance < other.distance;
   }
 
+public:
+  double GetDistance() const { return distance; }
+
+  Ray GetRay() const { return ray; }
+
+  glm::dvec3 GetIntersectionPoint() const {
+    #ifndef NDEBUG
+    ray.AssertNormalized();
+    #endif // !NDEBUG
+
+    return ray.GetOrigin() + distance * ray.GetDirection();
+  }
+
+  Ray GetNormalRay() const {
+    assert(std::abs(glm::length(normal) - 1.0) < 1.0e-6 &&
+           "Normal must be normalized!");
+    return Ray(GetIntersectionPoint(), normal);
+  }
+
+  glm::dvec3 GetNormalVector() const {
+    return normal;
+  }
+
+  const Material *GetMaterialPtr() const { return material; }
+
 private:
   // Indicates whether an intersection occured.
   // Values below are valid only if hasIntersection is true.
@@ -44,29 +69,4 @@ private:
 
   // TODO: Meterial of intersection surface.
   const Material *material;
-
-public:
-  double getDistance() const { return distance; }
-
-  Ray getRay() const { return ray; }
-
-  glm::dvec3 getIntersectionPoint() const {
-    #ifndef NDEBUG
-    ray.AssertNormalized();
-    #endif // !NDEBUG
-
-    return ray.getOrigin() + distance * ray.getDirection();
-  }
-
-  Ray getNormalRay() const {
-    assert(std::abs(glm::length(normal) - 1.0) < 1.0e-6 &&
-           "Normal must be normalized!");
-    return Ray(getIntersectionPoint(), normal);
-  }
-
-  glm::dvec3 getNormalVector() const {
-    return normal;
-  }
-
-  const Material *getMaterialPtr() const { return material; }
 };

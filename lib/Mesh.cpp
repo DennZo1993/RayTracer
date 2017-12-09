@@ -43,7 +43,7 @@ MeshFace::MeshFace(MeshObjectIndexType idx1,
 }
 
 const MeshVertex& MeshFace::getVertex(MeshObjectIndexType idx) const {
-  assert(idx >= 0 && idx <= 2 && "Vertex index in face out of bounds!");
+  assert(idx <= 2 && "Vertex index in face out of bounds!");
   return parentMesh->getVertexes()[vertexIndexes[idx]];
 }
 

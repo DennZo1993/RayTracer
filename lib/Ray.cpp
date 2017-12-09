@@ -15,7 +15,6 @@ Ray Ray::Reflect(const Ray &normalRay) const {
          "Wrong normal direction for reflection!");
   #endif
 
-  glm::dvec3 normalizedNormalDirection = glm::normalize(normalRay.direction);
   auto IDotN = glm::dot(direction, normalRay.direction);
   glm::dvec3 resDirection = direction - 2 * IDotN * normalRay.direction;
   return Ray(normalRay.origin, resDirection);
